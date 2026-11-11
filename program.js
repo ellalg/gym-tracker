@@ -139,9 +139,9 @@ export const PROGRAM = {
     name: 'Calisthenics',
     subtitle: 'Bodyweight + walk',
     warmup: [
-      '3 min easy incline walk',
       '10 cat-cows',
       '10 arm circles each way',
+      '10 walkouts',
       '10 glute bridges',
     ],
     blocks: [

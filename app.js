@@ -6,7 +6,7 @@ const restbar = document.getElementById('restbar');
 const toastEl = document.getElementById('toast');
 
 // In-memory state. `sessions` mirrors IndexedDB; `active` is the workout in progress.
-const S = { sessions: [], active: null, rest: null, ival: null, wake: null, audio: null, persisted: false };
+const S = { sessions: [], active: null, rest: null, ival: null, wake: null, persisted: false };
 
 /* =========================================================
    Utilities
@@ -44,29 +44,12 @@ function toast(msg) {
   toast.t = setTimeout(() => (toastEl.hidden = true), 2200);
 }
 
-/* ---------- sound + vibration ---------- */
-function unlockAudio() {
+/* ---------- vibration alerts (no sound) ---------- */
+// pulses = 2: long double buzz (rest over / work starts); 1: single short buzz (rest starts).
+function alertUser(pulses = 2) {
   try {
-    if (!S.audio) S.audio = new (window.AudioContext || window.webkitAudioContext)();
-    if (S.audio.state === 'suspended') S.audio.resume();
-  } catch { /* no audio */ }
-}
-function alertUser(beeps = 2) {
-  try {
-    navigator.vibrate?.(beeps > 1 ? [250, 120, 250] : [200]);
-    const ctx = S.audio;
-    if (!ctx) return;
-    for (let i = 0; i < beeps; i++) {
-      const t = ctx.currentTime + i * 0.28;
-      const osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.frequency.value = 880;
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(0.3, t + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(t); osc.stop(t + 0.22);
-    }
-  } catch { /* ignore */ }
+    navigator.vibrate?.(pulses > 1 ? [400, 150, 400] : [250]);
+  } catch { /* not supported */ }
 }
 
 /* ---------- screen wake lock ---------- */
@@ -731,7 +714,6 @@ async function saveWorkout() {
 app.addEventListener('click', async ev => {
   const b = ev.target.closest('[data-act]');
   if (!b) return;
-  unlockAudio();
   const act = b.dataset.act;
   const x = Number(b.dataset.x), i = Number(b.dataset.i);
 

@@ -1,5 +1,5 @@
 // Offline support: serve from cache instantly, refresh the cache in the background.
-const CACHE = 'gym-tracker-v1';
+const CACHE = 'gym-tracker-v2';
 const ASSETS = [
   './', './index.html', './styles.css', './app.js', './program.js', './db.js',
   './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png',
